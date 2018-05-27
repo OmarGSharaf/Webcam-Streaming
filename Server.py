@@ -2,7 +2,7 @@ import socket, threading
 from ClientThread import ClientThread
 
 class Server:
-    def __init__(self, TCP_IP = "127.0.0.1", TCP_PORT = "8080",THREAD_INDEX=1, BUFFER_SIZE = 20):
+    def __init__(self, TCP_IP = "127.0.0.1", TCP_PORT = "8080",THREAD_INDEX=1, BUFFER_SIZE = 32768):
         self.THREAD_INDEX = THREAD_INDEX
         self.BUFFER_SIZE = BUFFER_SIZE
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

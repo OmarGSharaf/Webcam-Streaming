@@ -11,14 +11,18 @@ class ClientThread(threading.Thread):
         self.client_socket = client_socket
         self.addr = addr
         self.BUFFER_SIZE = BUFFER_SIZE
-        self.vf = Videofeed(self.THREAD_INDEX)
+        self.vf = Videofeed(str(self.THREAD_INDEX))
         print "[INFO] connection received from: %s\n" %(self.addr[1]),
 
     def run(self):
             threadLimiter.acquire()
             try:
-                for x in range (1,512):
-                    data = self.client_socket.recv(self.BUFFER_SIZE)
+                while True:
+                    data = b''
+                    while True:
+                        part = self.client_socket.recv(self.BUFFER_SIZE)
+                        data += part
+                        if len(part) < self.BUFFER_SIZE: break
                     self.vf.set_frame(data)
 
             except socket.error, e: 

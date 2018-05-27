@@ -7,6 +7,8 @@ class Videofeed:
     def __init__(self, name = "test", index = 0):
         self.index = index
         self.name = name
+        self.frame = None
+        #numpy.set_printoptions(threshold='nan')
 
     def start(self):
         self.vs = VideoStream(self.index).start()
@@ -14,7 +16,7 @@ class Videofeed:
        
     def check_camera_index(self):
         key = cv2.waitKey(1)
-        if (key == "n"): 
+        if key == ord("n"): 
             self.index += 1 
             self.vs = VideoStream(self.index).start()
             if not self.vs: 
@@ -22,21 +24,18 @@ class Videofeed:
                 self.vs = VideoStream(self.index).start()
     
     def get_frame(self):
-        frame = self.vs.read()
+        self.frame = imutils.resize(self.vs.read(), width=450)
         self.check_camera_index()
-        b = io.BytesIO()        
-        frame = imutils.resize(frame, width=450)
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        stream = Image.fromarray(frame)
-        stream.save(b, 'jpeg')
-        time.sleep(1)
+        b = io.BytesIO()
+        Image.fromarray(cv2.cvtColor(self.frame, cv2.COLOR_BGR2RGB)).save(b, 'jpeg')
         return b.getvalue()
 
+
     def set_frame(self, stream):
-        frame = io.BytesIO(stream)
-        frame = Image.open(frame)
-        frame = cv2.cvtColor(numpy.array(frame), cv2.COLOR_RGB2BGR)
-        cv2.imshow(self.name, frame)
+        self.frame = Image.open(io.BytesIO(stream))
+        self.frame = cv2.cvtColor(numpy.array(self.frame), cv2.COLOR_RGB2BGR)
+        cv2.imshow(self.name, self.frame)
+        cv2.waitKey(1)
 
 if __name__ == "__main__" :
     ap = argparse.ArgumentParser()
